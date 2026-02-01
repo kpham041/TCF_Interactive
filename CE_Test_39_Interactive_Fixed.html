@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCF Canada - Test 39 - Compréhension Écrite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 160px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 10px 15px 8px 15px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .title-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 20px;
+        }
+
+        .score {
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            padding: 8px 0 6px 0;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .nav-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .nav-circle:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        .nav-circle.current {
+            border: 3px solid #667eea;
+            background: #667eea;
+            color: white;
+            transform: scale(1.15);
+        }
+
+        .nav-circle.answered {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+
+        .legend {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 6px;
+            font-size: 11px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .passage {
+            background: #f8f9fa;
+            padding: 25px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 25px;
+            line-height: 1.8;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .question-number {
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .options {
+            margin-bottom: 25px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .option.selected {
+            background: #e3f2fd;
+            border-color: #2196F3;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .option-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 15px;
+            color: #667eea;
+        }
+
+        .option.correct .option-letter {
+            background: #28a745;
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: #dc3545;
+            color: white;
+        }
+
+        .validate-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .validate-btn:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .validate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .translation-section {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: #f0f7ff;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .translation-section.show {
+            display: block;
+            animation: slideDown 0.5s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 2000px;
+            }
+        }
+
+        .translation-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2196F3;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .translation-content {
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .translation-passage {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .translation-explanation {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .explanation-label {
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 180px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .nav-circle {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
+            }
+
+            h1 {
+                font-size: 16px;
+            }
+
+            .score {
+                font-size: 14px;
+            }
+
+            .navigation {
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="title-bar">
+                <h1>📚 TCF Canada - Test 39 - Compréhension Écrite</h1>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <div class="score">Score: <span id="score">0</span>/39</div>
+                    <button onclick="resetTest()" style="padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">🔄 Recommencer</button>
+                </div>
+            </div>
+            <div class="navigation" id="navigation"></div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-circle" style="border-color: #667eea; background: #667eea;"></div>
+                    <span>Actuel</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-circle" style="border-color: #4CAF50; background: #4CAF50;"></div>
+                    <span>Répondue</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="questionsContainer"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                passage: "Objet : Nouveau message\nMessage :\n\nSalut Justine,\nEst-ce que tu es libre samedi ?\nJ'organise une soirée pour mes 25 ans.\nCe sera chez moi à partir de 20h. Il y aura de la musique et on pourra danser.\nBastien\n\nPS : est-ce que tu pourrais apporter un gâteau ?",
+                question: "Où est invitée Justine ?",
+                options: [
+                    "À un cours de pâtisserie.",
+                    "À un déjeuner chez un ami.",
+                    "À une fête d'anniversaire.",
+                    "À une sortie en discothèque."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Subject: New message\nMessage:\n\nHi Justine,\nAre you free on Saturday?\nI'm organizing a party for my 25th birthday.\nIt will be at my place starting at 8 PM. There will be music and we can dance.\nBastien\n\nPS: Could you bring a cake?",
+                    question: "Where is Justine invited?",
+                    options: [
+                        "To a pastry class.",
+                        "To lunch at a friend's.",
+                        "To a birthday party.",
+                        "To a nightclub outing."
+                    ],
+                    explanation: "Bastien is organizing a party for his 25th birthday ('une soirée pour mes 25 ans'), so Justine is invited to a birthday party."
+                }
+            },
+            {
+                id: 2,
+                passage: "La société des transports T2C offre plusieurs moyens de transport publics: trente-quatre stations de tramway, de train et de métro en journée, 23 lignes de bus, dont une de nuit.\n\nPlus de renseignements sur notre site www.t2c.fr !",
+                question: "Quel transport circule après 23h ?",
+                options: [
+                    "Le bus.",
+                    "Le métro.",
+                    "Le train.",
+                    "Le tramway."
+                ],
+                correct: 0,
+                translation: {
+                    passage: "The T2C transportation company offers several means of public transport: thirty-four tram, train and metro stations during the day, 23 bus lines, including one at night.\n\nMore information on our website www.t2c.fr!",
+                    question: "Which transport runs after 11 PM?",
+                    options: [
+                        "The bus.",
+                        "The metro.",
+                        "The train.",
+                        "The tram."
+                    ],
+                    explanation: "The text mentions '23 lignes de bus, dont une de nuit' (23 bus lines, including one at night), so the bus runs after 11 PM."
+                }
+            },
+            {
+                id: 3,
+                passage: "Salut Anthony,\n\nJe t'annonce une bonne nouvelle: j'ai trouvé un poste de vendeur pour cet été ! C'est dans une boutique du centre-ville de Bordeaux. C'est un peu loin de la maison mais en voiture j'y serai en 20 minutes. On fêtera ça samedi !\n\nSimon",
+                question: "Qu'est-ce que Simon va faire ?",
+                options: [
+                    "Acheter une voiture.",
+                    "Aller chez Anthony.",
+                    "Faire des courses samedi.",
+                    "Travailler à Bordeaux."
+                ],
+                correct: 3,
+                translation: {
+                    passage: "Hi Anthony,\n\nI have good news to announce: I found a sales position for this summer! It's in a shop in downtown Bordeaux. It's a bit far from home but by car I'll be there in 20 minutes. We'll celebrate on Saturday!\n\nSimon",
+                    question: "What is Simon going to do?",
+                    options: [
+                        "Buy a car.",
+                        "Go to Anthony's place.",
+                        "Go shopping on Saturday.",
+                        "Work in Bordeaux."
+                    ],
+                    explanation: "Simon found a sales job ('un poste de vendeur') in downtown Bordeaux, so he will work in Bordeaux."
+                }
+            },
+            {
+                id: 4,
+                passage: "IMAGES\n\nVous êtes passionné de photographie et vous voulez partager vos créations?\n\nInscrivez-vous au prix du « Petit Reporter » :\n\nenvoyez une photo sur le thème de l'amitié au club « Images » ! Un appareil photo à gagner!\n\nInscription:\n\nwww.clubImages.fr/Prix PetitReporter",
+                question: "Que propose le club « Images » ?",
+                options: [
+                    "D'acheter du matériel en soldes.",
+                    "De participer à un concours.",
+                    "De rencontrer des professionnels.",
+                    "De suivre des cours débutants."
+                ],
+                correct: 1,
+                translation: {
+                    passage: "IMAGES\n\nAre you passionate about photography and want to share your creations?\n\nSign up for the 'Little Reporter' prize:\n\nsend a photo on the theme of friendship to the 'Images' club! A camera to be won!\n\nRegistration:\n\nwww.clubImages.fr/Prix PetitReporter",
+                    question: "What does the 'Images' club offer?",
+                    options: [
+                        "To buy equipment on sale.",
+                        "To participate in a contest.",
+                        "To meet professionals.",
+                        "To take beginner courses."
+                    ],
+                    explanation: "The club is offering a prize ('prix') where you can submit a photo to win a camera, which is a contest/competition."
+                }
+            },
+            {
+                id: 5,
+                passage: "SAMEDI 29 JUIN,\nVENEZ COURIR 10KM\nPOUR AIDER L'ASSOCIATION\n« TOUT ENSEMBLE POUR LA PAIX ».\n\nRENDEZ-VOUS A 10H, AU PARC DE VINCENNES.\n\nAMBIANCE SYMPATHIQUE ET REPAS OFFERT POUR LES SPORTIFS,\nVENEZ NOMBREUX!",
+                question: "Qu'est-ce que cette annonce propose ?",
+                options: [
+                    "D'aider à organiser une fête.",
+                    "De devenir membre d'une association.",
+                    "De distribuer des repas gratuits.",
+                    "De participer à un événement sportif."
+                ],
+                correct: 3,
+                translation: {
+                    passage: "SATURDAY JUNE 29,\nCOME RUN 10KM\nTO HELP THE ASSOCIATION\n'ALL TOGETHER FOR PEACE'.\n\nMEET AT 10 AM, AT VINCENNES PARK.\n\nFRIENDLY ATMOSPHERE AND FREE MEAL FOR ATHLETES,\nCOME IN LARGE NUMBERS!",
+                    question: "What does this announcement offer?",
+                    options: [
+                        "To help organize a party.",
+                        "To become a member of an association.",
+                        "To distribute free meals.",
+                        "To participate in a sports event."
+                    ],
+                    explanation: "The announcement invites people to come run 10km ('VENEZ COURIR 10KM'), which is a sports event."
+                }
+            },
+            {
+                id: 6,
+                passage: "De: cannelle@lilo.com\nÀ: Elke@mail.com\n\nSalut Elke,\n\nC'est bientôt la fête de nos 20 ans de mariage! Beaucoup d'invités viendront avec leurs enfants. Comme tu adores les petits, pourrais-tu t'occuper d'eux en journée ? Quand ils seront couchés, nous pourrons danser tous ensemble ! Merci, bisous.\n\nCannelle",
+                question: "Que demande Cannelle à son amie ?",
+                options: [
+                    "D'écrire aux invités.",
+                    "D'organiser la fête.",
+                    "De garder des enfants.",
+                    "De préparer des danses."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "From: cannelle@lilo.com\nTo: Elke@mail.com\n\nHi Elke,\n\nOur 20th wedding anniversary is coming soon! Many guests will come with their children. Since you love kids, could you take care of them during the day? When they're in bed, we can all dance together! Thanks, kisses.\n\nCannelle",
+                    question: "What is Cannelle asking her friend?",
+                    options: [
+                        "To write to the guests.",
+                        "To organize the party.",
+                        "To look after children.",
+                        "To prepare dances."
+                    ],
+                    explanation: "Cannelle asks 'pourrais-tu t'occuper d'eux' (could you take care of them), referring to the children, so she's asking to babysit/look after children."
+                }
+            },
+            {
+                id: 7,
+                passage: "Chers professeurs,\nChers étudiants,\n\nVenez rencontrer les nouveaux étudiants de la semaine !\n\nCe mardi, de 8 h 30 à 10 h 30.\nRendez-vous salle « Les Mimosas »\n\nJ. Lebon, directrice\nÉcole de langues ABC.",
+                question: "Pourquoi Madame Lebon écrit-elle cette annonce ?",
+                options: [
+                    "Pour changer un horaire.",
+                    "Pour organiser une fête.",
+                    "Pour présenter des élèves.",
+                    "Pour proposer une sortie."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Dear teachers,\nDear students,\n\nCome meet the new students of the week!\n\nThis Tuesday, from 8:30 AM to 10:30 AM.\nMeeting room 'Les Mimosas'\n\nJ. Lebon, director\nABC Language School.",
+                    question: "Why is Madame Lebon writing this announcement?",
+                    options: [
+                        "To change a schedule.",
+                        "To organize a party.",
+                        "To present students.",
+                        "To propose an outing."
+                    ],
+                    explanation: "The announcement invites people to 'rencontrer les nouveaux étudiants' (meet the new students), so she's introducing/presenting students."
+                }
+            },
+            {
+                id: 8,
+                passage: "Madame Chanmont,\n\nVous avez participé à notre concours et vous avez gagné un séjour d'une semaine tout compris (transport, hébergement, restauration) pour deux personnes en Italie ! Prenez contact par courriel avec notre service clientèle pour avoir toutes les informations.\n\nLe service commercial.",
+                question: "Que doit-faire madame Chanmont ?",
+                options: [
+                    "Écrire un message.",
+                    "Prendre un billet d'avion.",
+                    "Réserver un hôtel.",
+                    "S'inscrire à un jeu."
+                ],
+                correct: 0,
+                translation: {
+                    passage: "Mrs. Chanmont,\n\nYou participated in our contest and you won a one-week all-inclusive stay (transport, accommodation, meals) for two people in Italy! Contact our customer service by email to get all the information.\n\nThe sales department.",
+                    question: "What should Mrs. Chanmont do?",
+                    options: [
+                        "Write a message.",
+                        "Book a plane ticket.",
+                        "Reserve a hotel.",
+                        "Sign up for a game."
+                    ],
+                    explanation: "The text says 'Prenez contact par courriel' (contact by email), so she needs to write a message/email."
+                }
+            },
+            {
+                id: 9,
+                passage: "Vous avez une expérience dans l'éducation?\n\nVous avez du temps libre, et vous avez envie d'aider des élèves en difficulté ?\n\nOffrez vos services de soutien scolaire dans notre association de quartier !\n\nÉcrivez-nous à\navotreservice@mandarine.fr",
+                question: "Qu'est-ce que cette annonce propose ?",
+                options: [
+                    "De donner des cours.",
+                    "De garder des enfants.",
+                    "De rencontrer des voisins.",
+                    "De suivre des formations."
+                ],
+                correct: 0,
+                translation: {
+                    passage: "Do you have experience in education?\n\nDo you have free time, and do you want to help struggling students?\n\nOffer your tutoring services in our neighborhood association!\n\nWrite to us at\navotreservice@mandarine.fr",
+                    question: "What does this announcement offer?",
+                    options: [
+                        "To teach classes.",
+                        "To look after children.",
+                        "To meet neighbors.",
+                        "To take training courses."
+                    ],
+                    explanation: "The announcement asks people to offer 'services de soutien scolaire' (tutoring services) to help students, which means teaching/giving classes."
+                }
+            },
+            {
+                id: 10,
+                passage: "Marché facile est une application pour téléphone portable qui vous conseille les bons fruits et légumes de saison dans les supermarchés.\n\nElle donne aussi des informations sur le fromage, la viande et le poisson.",
+                question: "À quoi sert cette application ?",
+                options: [
+                    "À acheter sur internet.",
+                    "À choisir ses produits.",
+                    "À noter les magasins.",
+                    "À trouver des recettes."
+                ],
+                correct: 1,
+                translation: {
+                    passage: "Easy Market is a mobile phone application that advises you on good seasonal fruits and vegetables in supermarkets.\n\nIt also provides information on cheese, meat and fish.",
+                    question: "What is this application for?",
+                    options: [
+                        "To buy online.",
+                        "To choose your products.",
+                        "To rate stores.",
+                        "To find recipes."
+                    ],
+                    explanation: "The app 'conseille' (advises/recommends) good fruits and vegetables and provides information to help you choose products."
+                }
+            },
+            {
+                id: 11,
+                passage: "Montréal, la plus grande ville du Québec, figure en tête de liste des métropoles francophones.\n\nPartons à la découverte de ce morceau du Vieux Continent intégré au Nouveau Monde ! On la décrit comme la cité la plus européenne d'Amérique, mais, surtout, comme la plus américaine des francophones. Et c'est d'abord cet aspect-là qui surprend les Européens tout juste arrivés dans cette ville pleine d'énergie et de caractère.",
+                question: "Pourquoi cette ville est-elle particulière ?",
+                options: [
+                    "C'est la destination préférée des touristes français.",
+                    "De plus en plus de jeunes souhaitent s'y installer.",
+                    "Elle réunit les caractéristiques de deux continents.",
+                    "On y entend des langues du monde entier."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Montreal, the largest city in Quebec, tops the list of French-speaking metropolises.\n\nLet's discover this piece of the Old Continent integrated into the New World! It's described as the most European city in America, but especially as the most American of French-speaking cities. And it's primarily this aspect that surprises Europeans who have just arrived in this city full of energy and character.",
+                    question: "Why is this city special?",
+                    options: [
+                        "It's the favorite destination of French tourists.",
+                        "More and more young people want to settle there.",
+                        "It combines characteristics of two continents.",
+                        "You can hear languages from all over the world."
+                    ],
+                    explanation: "The text describes Montreal as 'la plus européenne d'Amérique' and 'la plus américaine des francophones' - combining European and American characteristics."
+                }
+            },
+            {
+                id: 12,
+                passage: "SAUVEZ DES VIES\n\nTous les samedis pendant l'été, vous pouvez donner votre sang pour les malades et les blessés.\nOù ?\n\nDans un camion spécialisé garé devant la mairie.\n\nNOUS AVONS BESOIN DE VOUS!",
+                question: "Que propose cette annonce ?",
+                options: [
+                    "D'aider des malades.",
+                    "De faire un don.",
+                    "De s'informer à la mairie.",
+                    "De travailler l'été."
+                ],
+                correct: 1,
+                translation: {
+                    passage: "SAVE LIVES\n\nEvery Saturday during the summer, you can donate your blood for the sick and injured.\nWhere?\n\nIn a specialized truck parked in front of the town hall.\n\nWE NEED YOU!",
+                    question: "What does this announcement offer?",
+                    options: [
+                        "To help sick people.",
+                        "To make a donation.",
+                        "To get information at the town hall.",
+                        "To work in the summer."
+                    ],
+                    explanation: "The announcement invites people to 'donner votre sang' (donate your blood), which is making a donation."
+                }
+            },
+            {
+                id: 13,
+                passage: "Message :\n\nMonsieur le Directeur,\nConformément au devis (en pièce jointe) qui a reçu votre accord, notre équipe interviendra le 20 juin prochain pour effectuer les opérations nécessaires dans l'aile droite du bâtiment principal de votre société.\nLe chantier nécessite l'utilisation de produits à risque et d'un appareillage bruyant. Pour la sécurité et le confort de votre personnel, il serait préférable que les services du bâtiment concerné soient suspendus la journée du 20.\nMerci par avance de me faire part de votre avis sur ce point.\nCordialement,\nJacques Legendre\nChef du service d'entretien",
+                question: "Que demande Jacques Legendre au directeur ?",
+                options: [
+                    "D'envoyer très rapidement le devis.",
+                    "D'interdire l'emploi de produits toxiques.",
+                    "De libérer les lieux pendant les travaux.",
+                    "De préciser la nature de l'intervention."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Message:\n\nMr. Director,\nIn accordance with the quote (attached) which received your approval, our team will intervene on June 20 to carry out the necessary operations in the right wing of your company's main building.\nThe work site requires the use of hazardous products and noisy equipment. For the safety and comfort of your staff, it would be preferable for the services in the concerned building to be suspended on the 20th.\nThank you in advance for sharing your opinion on this point.\nSincerely,\nJacques Legendre\nMaintenance Service Manager",
+                    question: "What is Jacques Legendre asking the director?",
+                    options: [
+                        "To send the quote very quickly.",
+                        "To prohibit the use of toxic products.",
+                        "To vacate the premises during the work.",
+                        "To specify the nature of the intervention."
+                    ],
+                    explanation: "He suggests 'il serait préférable que les services du bâtiment concerné soient suspendus' (it would be preferable for services in the building to be suspended), meaning to vacate/free up the premises."
+                }
+            },
+            {
+                id: 14,
+                passage: "La loi interdit de mettre à disposition des mineurs des appareils de bronzage. Nous avons envoyé trois jeunes filles, âgées de quinze ans, dans vingt-cinq solariums (centres de bronzage). Elles disaient qu'elles souhaitaient faire des séances de bronzage. Le bilan de leurs visites est affligeant : un seul centre a refusé en expliquant que les bancs solaires sont interdits aux mineurs. Vingt-deux n'ont même pas demandé l'âge de ces jeunes filles et étaient prêts à les accepter. Deux se sont renseignés sur leur âge, ajoutant que si leurs mères étaient d'accord, il n'y avait pas de problème. Or l'interdiction est totale, même en cas d'accord parental.",
+                question: "L'auteur de cet article tire de son enquête un bilan négatif parce que :",
+                options: [
+                    "Certains solariums font une discrimination anti-jeunes.",
+                    "La majorité des solariums ne respecte pas du tout la loi.",
+                    "La plupart des jeunes filles ignorent l'interdiction légale.",
+                    "La plupart des parents ignorent les dangers des solariums."
+                ],
+                correct: 1,
+                translation: {
+                    passage: "The law prohibits making tanning equipment available to minors. We sent three young girls, aged fifteen, to twenty-five tanning salons. They said they wanted tanning sessions. The results of their visits are distressing: only one center refused, explaining that sunbeds are forbidden to minors. Twenty-two didn't even ask the age of these young girls and were ready to accept them. Two inquired about their age, adding that if their mothers agreed, there was no problem. However, the ban is total, even with parental consent.",
+                    question: "The author of this article draws a negative assessment from the investigation because:",
+                    options: [
+                        "Some tanning salons discriminate against young people.",
+                        "The majority of tanning salons do not respect the law at all.",
+                        "Most young girls are unaware of the legal prohibition.",
+                        "Most parents are unaware of the dangers of tanning salons."
+                    ],
+                    explanation: "Out of 25 salons, only 1 refused service correctly. 22 didn't ask age and 2 accepted with parental consent (which is still illegal), so the vast majority (24/25) did not respect the law."
+                }
+            },
+            {
+                id: 15,
+                passage: "Chers collègues,\n\nNous vous invitons à une rencontre sur le thème « Organisation et conduite de conférences internationales » les 3 et 4 mai prochains. De nombreux spécialistes interviendront lors d'ateliers en petits groupes. Ce stage n'est pas obligatoire mais il est fortement recommandé aux collègues du service des relations internationales.\nVous obtiendrez le programme sur simple demande auprès de Madame Dupré.\n\nCordialement,\nLa direction.",
+                question: "Qu'est-ce qui est proposé aux employés ?",
+                options: [
+                    "D'assister à une réunion.",
+                    "De participer à un voyage.",
+                    "De suivre une formation.",
+                    "De travailler à l'étranger."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Dear colleagues,\n\nWe invite you to a meeting on the theme 'Organization and conduct of international conferences' on May 3rd and 4th. Many specialists will participate in small group workshops. This training is not mandatory but is strongly recommended for colleagues in the international relations department.\nYou can obtain the program by simply requesting it from Mrs. Dupré.\n\nSincerely,\nManagement.",
+                    question: "What is being offered to employees?",
+                    options: [
+                        "To attend a meeting.",
+                        "To participate in a trip.",
+                        "To take training.",
+                        "To work abroad."
+                    ],
+                    explanation: "The text mentions 'stage' (training/workshop) with specialists conducting workshops, so it's a training program."
+                }
+            },
+            {
+                id: 16,
+                passage: "NATURE +\nVous êtes-vous déjà promené en forêt après le coucher du soleil ? C'est un moyen unique de redécouvrir la forêt autrement, d'écouter les oiseaux et le bruit des animaux, de reconnaître les arbres et les plantes par le toucher. Vous serez accompagné d'un guide spécialiste de la région. Nature+ vous propose une promenade à pied ou à cheval. Il faut prévoir un vêtement chaud et une lampe de poche. Vous pouvez réserver en ligne dès à présent.",
+                question: "Que propose Nature+ ?",
+                options: [
+                    "De dormir en milieu naturel.",
+                    "De faire une visite originale.",
+                    "De participer à un stage aventure.",
+                    "De passer la nuit dans un zoo."
+                ],
+                correct: 1,
+                translation: {
+                    passage: "NATURE+\nHave you ever walked in the forest after sunset? It's a unique way to rediscover the forest differently, to listen to birds and animal sounds, to recognize trees and plants by touch. You will be accompanied by a regional specialist guide. Nature+ offers you a walk on foot or on horseback. You should bring warm clothing and a flashlight. You can book online now.",
+                    question: "What does Nature+ offer?",
+                    options: [
+                        "To sleep in nature.",
+                        "To take an original visit.",
+                        "To participate in an adventure course.",
+                        "To spend the night at a zoo."
+                    ],
+                    explanation: "Nature+ offers a unique forest walk after sunset ('un moyen unique de redécouvrir la forêt autrement'), which is an original/unusual visit."
+                }
+            },
+            {
+                id: 17,
+                passage: "Le sport arrive largement en tête des nombreuses activités extrascolaires proposées aux 12-16 ans. Les parents se font une obligation sociale d'inscrire leurs enfants à ces activités et de montrer aux autres qu'ils sont de « bons parents » qui veillent à l'épanouissement global de leurs enfants. Ils leur permettent ainsi de se divertir, de se dépenser, et de s'initier à un sport individuel ou collectif. C'est également l'occasion pour les enfants de découvrir et d'accepter leurs propres limites.",
+                question: "Qu'est-ce qui incite les parents à inscrire leurs enfants à des activités sportives ?",
+                options: [
+                    "La pression de la société.",
+                    "La réputation des clubs.",
+                    "Les bienfaits pour la santé.",
+                    "Les envies des adolescents."
+                ],
+                correct: 0,
+                translation: {
+                    passage: "Sports rank high among the many extracurricular activities offered to 12-16 year olds. Parents feel a social obligation to enroll their children in these activities and to show others that they are 'good parents' who care about their children's overall development. They allow them to have fun, exercise, and get initiated into an individual or team sport. It's also an opportunity for children to discover and accept their own limits.",
+                    question: "What motivates parents to enroll their children in sports activities?",
+                    options: [
+                        "Societal pressure.",
+                        "The reputation of clubs.",
+                        "Health benefits.",
+                        "Teenagers' desires."
+                    ],
+                    explanation: "The text says parents feel 'une obligation sociale' (a social obligation) to enroll children and show they are good parents, indicating societal pressure."
+                }
+            },
+            {
+                id: 18,
+                passage: "« Beaucoup d'aliments pour enfants sont testés par des adultes », explique le délégué régional du projet « DisMoiGoût ». Leur avis intéresse pourtant ceux qui cherchent à développer des gammes de produits dédiés aux petits. L'école agroalimentaire nantaise a ainsi entrepris de sonder les goûts des bambins et leur perception des aliments. Objectif : cerner plus subtilement leur profil alimentaire. Les résultats de cette étude devraient permettre, à terme, d'élaborer des produits bons pour leur santé, c'est-à-dire conformes aux recommandations du Programme national de nutrition, mais aussi bons pour leur goût.",
+                question: "Quelle est la vocation du projet « DisMoiGoût » ?",
+                options: [
+                    "Corriger les mauvaises habitudes alimentaires des enfants.",
+                    "Faire respecter la législation sur l'alimentation des enfants.",
+                    "Mieux comprendre les préférences alimentaires des enfants.",
+                    "Permettre aux enfants de découvrir de nouveaux aliments."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "'Many children's foods are tested by adults,' explains the regional delegate of the 'DisMoiGoût' project. However, their opinion interests those seeking to develop product ranges dedicated to children. The Nantes food school has thus undertaken to survey children's tastes and their perception of foods. Objective: to more subtly define their food profile. The results of this study should eventually allow the development of products that are good for their health, that is to say in line with the recommendations of the National Nutrition Program, but also good for their taste.",
+                    question: "What is the purpose of the 'DisMoiGoût' project?",
+                    options: [
+                        "To correct children's bad eating habits.",
+                        "To enforce legislation on children's food.",
+                        "To better understand children's food preferences.",
+                        "To allow children to discover new foods."
+                    ],
+                    explanation: "The project aims to 'sonder les goûts des bambins et leur perception des aliments' (survey children's tastes and perception of foods) to understand their preferences better."
+                }
+            },
+            {
+                id: 19,
+                passage: "Le projet de tunnel sous l'Atlantique \"Transatlantic\" faisait croire à un train fantôme dans un faux tunnel, mais une vraie campagne de communication. Tout le monde en a parlé : des affiches partout en France présentaient ce projet de tunnel qui mettrait New York à 8 heures de train de Paris. La plaisanterie a bien fonctionné. Mais qui se cachait donc derrière ce projet ? Aujourd'hui, le publicitaire et son client, la SNCF, avouent tout en révélant qu'« on ne peut pas aller partout en train ». C'est pourquoi \"voyages SNCF\" vend aussi \"de l'avion et des séjours\", à New York notamment. En attendant, les deux plaisantins en ont fait rêver plus d'un.",
+                question: "Quel était le but de la SNCF en lançant cette campagne publicitaire ?",
+                options: [
+                    "Annoncer le lancement d'une nouvelle ligne ferroviaire.",
+                    "Faire patienter les usagers de la SNCF pendant leur trajet.",
+                    "Promouvoir d'autres offres commerciales de la SNCF.",
+                    "Rappeler que le train permet de rallier toutes les villes."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "The 'Transatlantic' tunnel project under the Atlantic made people believe in a ghost train in a fake tunnel, but a real communication campaign. Everyone talked about it: posters everywhere in France presented this tunnel project that would put New York 8 hours by train from Paris. The joke worked well. But who was hiding behind this project? Today, the advertiser and its client, SNCF, confess everything by revealing that 'you can't go everywhere by train.' That's why 'SNCF voyages' also sells 'flights and stays,' to New York in particular. Meanwhile, the two jokers made more than one person dream.",
+                    question: "What was SNCF's goal in launching this advertising campaign?",
+                    options: [
+                        "To announce the launch of a new railway line.",
+                        "To keep SNCF users patient during their journey.",
+                        "To promote other SNCF commercial offers.",
+                        "To remind that trains can reach all cities."
+                    ],
+                    explanation: "The campaign revealed that SNCF also sells flights and travel packages ('de l'avion et des séjours'), promoting their other commercial offerings beyond trains."
+                }
+            },
+            {
+                id: 20,
+                passage: "Des études de marché récentes montrent que les frites signent leur grand retour. Leur cote de popularité ne se dément pas, mais elles doivent être préparées dans les règles de l'art : pour des frites dorées, moelleuses dedans, croustillantes dehors, il faut les cuire deux fois, puis les frire en deux temps. Si la Belgique et la France s'en disputent la paternité, on n'en a toujours pas trouvé l'origine. Avec le bond spectaculaire du burger dont elles sont l'accompagnement idéal, les frites sont fortement consommées au restaurant.",
+                question: "Que révèle cet article sur les Frites ?",
+                options: [
+                    "L'origine historique de la recette.",
+                    "Le secret d'une bonne préparation.",
+                    "Les adresses où les consommer.",
+                    "Les raisons de leur popularité."
+                ],
+                correct: 3,
+                translation: {
+                    passage: "Recent market studies show that French fries are making a big comeback. Their popularity rating remains strong, but they must be prepared properly: for golden, soft inside, crispy outside fries, you have to cook them twice, then fry them in two stages. While Belgium and France dispute their origin, the source has never been found. With the spectacular rise of burgers, which they are the ideal accompaniment to, fries are heavily consumed in restaurants.",
+                    question: "What does this article reveal about French fries?",
+                    options: [
+                        "The historical origin of the recipe.",
+                        "The secret of good preparation.",
+                        "Addresses where to eat them.",
+                        "The reasons for their popularity."
+                    ],
+                    explanation: "The article explains why fries are popular: their comeback, their role as burger accompaniment ('l'accompagnement idéal'), and high restaurant consumption - these are reasons for popularity."
+                }
+            },
+            {
+                id: 21,
+                passage: "Parents mode d'emploi\n\nSérie télévisée - Du lundi au vendredi à 20h40\nNous découvrons le quotidien de Gaby et Isa, les personnages principaux, quadragénaires d'aujourd'hui, qui cherchent un mode d'emploi pour être de bons parents ! Ils essaient de contrôler la situation et seraient même prêts à nous donner des conseils mais comme tous les parents, ils font de grosses erreurs... ce qui nous amuse et nous fait rire, pour notre plus grand plaisir !\n\nD'après www.elephant-groupe.com",
+                question: "Quel est l'objectif de cette série télévisée ?",
+                options: [
+                    "Informer sur de nouvelles méthodes éducatives.",
+                    "Montrer la vie de tous les jours d'un jeune couple.",
+                    "Présenter les relations familiales avec humour.",
+                    "Proposer des solutions à des situations de crise."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Parents User Manual\n\nTV Series - Monday to Friday at 8:40 PM\nWe discover the daily life of Gaby and Isa, the main characters, today's forty-somethings, who are looking for a user manual to be good parents! They try to control the situation and would even be ready to give us advice but like all parents, they make big mistakes... which amuses us and makes us laugh, for our greatest pleasure!\n\nFrom www.elephant-groupe.com",
+                    question: "What is the objective of this TV series?",
+                    options: [
+                        "To inform about new educational methods.",
+                        "To show the daily life of a young couple.",
+                        "To present family relationships with humor.",
+                        "To offer solutions to crisis situations."
+                    ],
+                    explanation: "The series shows parents making mistakes 'ce qui nous amuse et nous fait rire' (which amuses us and makes us laugh), presenting family life humorously."
+                }
+            },
+            {
+                id: 22,
+                passage: "Pendant un an, la journaliste allemande Greta Taubert a décidé de quitter la société de consommation sans quitter son appartement berlinois. Pendant cette expérience, elle a bu, mangé, s'est habillée sans payer : elle a échangé jupes et pantalons avec ses voisines, planté des légumes dans un jardin collectif. Pour ses vacances, elle est allée chez des amis en faisant de l'auto-stop. « Aujourd'hui, je suis contente de ne plus vivre aussi radicalement, c'était difficile mais je cherche à intégrer dans mon quotidien ce que j'ai appris », explique-t-elle.\n\nD'après linternaute.com",
+                question: "Quel est le constat de Greta Taubert après cette expérience ?",
+                options: [
+                    "C'est possible à la campagne.",
+                    "C'est possible avec du temps.",
+                    "C'est possible mais pénible.",
+                    "C'est possible pour tous."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "For one year, German journalist Greta Taubert decided to leave consumer society without leaving her Berlin apartment. During this experience, she drank, ate, and dressed without paying: she exchanged skirts and pants with her neighbors, planted vegetables in a community garden. For her vacation, she went to friends' places by hitchhiking. 'Today, I'm happy to no longer live so radically, it was difficult but I'm trying to integrate what I learned into my daily life,' she explains.\n\nFrom linternaute.com",
+                    question: "What is Greta Taubert's assessment after this experience?",
+                    options: [
+                        "It's possible in the countryside.",
+                        "It's possible with time.",
+                        "It's possible but difficult.",
+                        "It's possible for everyone."
+                    ],
+                    explanation: "She says 'c'était difficile' (it was difficult) and she's happy to no longer live so radically, indicating it's possible but hard/painful."
+                }
+            },
+            {
+                id: 23,
+                passage: "Un salarié qui avale un sandwich devant l'écran en guise de pause déjeuner offre à son employeur 128 heures de travail non rémunéré, soit seize jours pleins, ont calculé des chercheurs britanniques.\nInterrogés sur leurs motivations, ces salariés expliquent se sentir trop coupables de s'arrêter de travailler. En ces temps de compétition exacerbée entre les salariés, ce serait interprété comme un manque d'efficacité. Un médecin rappelle pourtant que « faire des pauses régulières, se lever et marcher aide à s'aérer l'esprit » pendant sa journée de travail. « Prendre une pause déjeuner prépare à une après-midi productive », poursuit-il.\n\nD'après lexpress.fr",
+                question: "D'après cet article, pourquoi certains salariés travaillent-ils pendant la pause déjeuner ?",
+                options: [
+                    "Pour améliorer leur situation financière.",
+                    "Pour donner une bonne image d'eux.",
+                    "Pour exécuter les ordres de la direction.",
+                    "Pour quitter leur entreprise plus tôt."
+                ],
+                correct: 1,
+                translation: {
+                    passage: "An employee who eats a sandwich in front of the screen as a lunch break gives their employer 128 hours of unpaid work, or sixteen full days, British researchers calculated.\nAsked about their motivations, these employees explain they feel too guilty to stop working. In these times of intense competition between employees, it would be interpreted as a lack of efficiency. However, a doctor reminds us that 'taking regular breaks, getting up and walking helps clear the mind' during the work day. 'Taking a lunch break prepares for a productive afternoon,' he continues.\n\nFrom lexpress.fr",
+                    question: "According to this article, why do some employees work during lunch break?",
+                    options: [
+                        "To improve their financial situation.",
+                        "To give a good image of themselves.",
+                        "To execute management orders.",
+                        "To leave their company earlier."
+                    ],
+                    explanation: "Employees don't want to be seen as lacking efficiency ('un manque d'efficacité'), so they want to project a good image/impression."
+                }
+            },
+            {
+                id: 24,
+                passage: "Le festival Étonnants Voyageurs de Saint-Malo ouvrira ses portes vendredi 27 mai.\nComme chaque année, ce rendez-vous soutenu par de nombreux sponsors réunit des écrivains du voyage. En revanche, la thématique qui, jusqu'à présent, était de rigueur, a été abandonnée cette année. Pas de pays à l'honneur, mais le monde, car si l'identité propre à tout groupe humain n'est pas contestée, les frontières posent problème. Quelle légitimité y a-t-il en effet à mettre en valeur un pays, alors que l'une des revendications de ces écrivains qui ont fondé le collectif « Pour une littérature voyageuse » est d'être citoyen du monde ? C'est donc le rapport à la route qui est questionné cette année, sans souci de localisation précise.",
+                question: "Pourquoi le festival Étonnants Voyageurs a-t-il cessé de mettre un pays à l'honneur?",
+                options: [
+                    "Parce que la majorité des pays invités en a fait la demande.",
+                    "Parce que la manifestation s'est centrée sur la région de Saint-Malo.",
+                    "Parce que les partenaires ont réduit leurs subventions.",
+                    "Parce que l'événement s'inscrit dans un principe d'universalité."
+                ],
+                correct: 3,
+                translation: {
+                    passage: "The Étonnants Voyageurs festival in Saint-Malo will open its doors Friday, May 27.\nAs every year, this event supported by many sponsors brings together travel writers. However, the theme that had been rigorous until now has been abandoned this year. No country is honored, but the world, because while the identity specific to each human group is not contested, borders are problematic. What legitimacy is there indeed in highlighting a country, when one of the claims of these writers who founded the collective 'For a traveling literature' is to be a citizen of the world? So it's the relationship to the road that is questioned this year, without concern for precise location.",
+                    question: "Why did the Étonnants Voyageurs festival stop honoring a country?",
+                    options: [
+                        "Because the majority of invited countries requested it.",
+                        "Because the event focused on the Saint-Malo region.",
+                        "Because partners reduced their subsidies.",
+                        "Because the event follows a principle of universality."
+                    ],
+                    explanation: "The writers advocate being 'citoyen du monde' (world citizen), preferring universality over highlighting specific countries or borders."
+                }
+            },
+            {
+                id: 25,
+                passage: "La population d'insectes volants, essentiels aux écosystèmes, a diminué de plus de 75 % en près de trente ans en Allemagne sans que les scientifiques ne parviennent à en déterminer la cause avec certitude. Les chercheurs, qui ont mené leur étude dans des zones protégées en Allemagne depuis 1989, suspectent les pesticides agricoles d'être responsables de ce phénomène préoccupant. Selon leurs conclusions publiées dans la revue Plos One, ce fort déclin a été observé quels que soient les changements météorologiques, le type d'exploitation des sols ou les caractéristiques de l'habitat.",
+                question: "À quoi serait due la baisse du nombre d'insectes ?",
+                options: [
+                    "L'urbanisation galopante des campagnes.",
+                    "La faible étendue des réserves écologiques.",
+                    "Le dérèglement climatique de la planète.",
+                    "Les produits utilisés dans les cultures."
+                ],
+                correct: 3,
+                translation: {
+                    passage: "The population of flying insects, essential to ecosystems, has decreased by more than 75% in nearly thirty years in Germany without scientists being able to determine the cause with certainty. Researchers, who conducted their study in protected areas in Germany since 1989, suspect agricultural pesticides are responsible for this worrying phenomenon. According to their conclusions published in the journal Plos One, this sharp decline was observed regardless of weather changes, the type of land use or habitat characteristics.",
+                    question: "What would the decrease in the number of insects be due to?",
+                    options: [
+                        "Galloping urbanization of the countryside.",
+                        "The small extent of ecological reserves.",
+                        "The planet's climate disruption.",
+                        "Products used in crops."
+                    ],
+                    explanation: "Researchers suspect 'les pesticides agricoles' (agricultural pesticides), which are products used in farming/crops."
+                }
+            },
+            {
+                id: 26,
+                passage: "Le lieu de travail doit-il être un espace où il faut en permanence être souriant et heureux ? L'idée qu'il est essentiel de constamment se présenter sous son meilleur jour est depuis longtemps ancrée dans les mentalités. Pour cette raison, les employeurs cherchent souvent comment faire pour stimuler le moral de leurs employés. Il vient pourtant d'être prouvé que cela était contre-productif : s'autoriser à ne pas toujours être aimable peut mener les employés à faire moins d'erreurs et à améliorer leurs capacités de communication.",
+                question: "Quelle idée est remise en question par cet auteur ?",
+                options: [
+                    "L'esprit d'équipe est la clé de la réussite professionnelle.",
+                    "La bonne humeur garantit de meilleures performances.",
+                    "Le cadre de l'entreprise influe sur le moral des salariés.",
+                    "Les primes contribuent à la motivation du personnel."
+                ],
+                correct: 1,
+                translation: {
+                    passage: "Should the workplace be a space where you must constantly be smiling and happy? The idea that it's essential to constantly present yourself in your best light has long been ingrained in mentalities. For this reason, employers often seek ways to boost their employees' morale. However, it has just been proven that this was counterproductive: allowing yourself not to always be pleasant can lead employees to make fewer mistakes and improve their communication skills.",
+                    question: "What idea is questioned by this author?",
+                    options: [
+                        "Team spirit is the key to professional success.",
+                        "Good mood guarantees better performance.",
+                        "The company environment influences employee morale.",
+                        "Bonuses contribute to staff motivation."
+                    ],
+                    explanation: "The author challenges the idea that constant cheerfulness ('constamment se présenter sous son meilleur jour') leads to better performance, showing it's actually counterproductive."
+                }
+            },
+            {
+                id: 27,
+                passage: "Les publicités vantant les vertus supposées des produits alimentaires sur la santé seront soumises à des règles strictes. Les allégations liées à la santé se multiplient et sont de nature à tromper le public car des aliments sont présentés comme des antidotes. Ainsi, une marque de yaourts suggère les effets antibactériens de son produit en montrant un enfant qui remet à la bouche son gâteau tombé dans le sable. Ce spot a été interdit d'antenne. Il serait criminel de laisser croire que l'aliment immunise l'enfant alors qu'il vient d'un endroit qui pullule de bactéries.",
+                question: "Pourquoi une publicité pour le yaourt a-t-elle été interdite ?",
+                options: [
+                    "L'image proposée par la publicité nuisait au fabricant.",
+                    "Le produit vendu par la publicité était nocif pour la santé.",
+                    "Le message véhiculé par la publicité était inacceptable.",
+                    "L'usage du produit promu par la publicité était illicite."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Advertisements touting the supposed virtues of food products on health will be subject to strict rules. Health-related claims are multiplying and are likely to mislead the public because foods are presented as antidotes. For example, a yogurt brand suggests the antibacterial effects of its product by showing a child putting back in their mouth a cake that fell in the sand. This ad was banned from airwaves. It would be criminal to make people believe that the food immunizes the child when it comes from a place teeming with bacteria.",
+                    question: "Why was a yogurt advertisement banned?",
+                    options: [
+                        "The image offered by the advertisement harmed the manufacturer.",
+                        "The product sold by the advertisement was harmful to health.",
+                        "The message conveyed by the advertisement was unacceptable.",
+                        "The use of the product promoted by the advertisement was illegal."
+                    ],
+                    explanation: "The ad suggested the yogurt could protect against bacteria ('immunise'), which is a misleading/unacceptable health claim ('serait criminel de laisser croire')."
+                }
+            },
+            {
+                id: 28,
+                passage: "Serge Ravet est catégorique : « Demain, on étudiera dans un autre monde, un monde virtuel », affirme le directeur de l'Institut européen du e-learning, convaincu que les nouvelles technologies vont « révolutionner la manière d'apprendre et d'enseigner ».\nAvec l'e-learning (ou formation en ligne), l'étudiant devient effectivement acteur de sa formation. Grâce aux outils de communication – messagerie instantanée, tchat, visioconférence – et de collaboration – wikis, forums –, il peut entretenir une relation nouvelle avec ses professeurs. « Curieusement, la distance physique peut être un avantage car la technologie facilite les interactions, signale Serge Ravet. Il est souvent moins intimidant d'interpeller un prof derrière son écran qu'en amphithéâtre ! »",
+                question: "Qu'apprend-on sur les étudiants qui pratiquent l'e-learning ?",
+                options: [
+                    "Ils améliorent leurs résultats dans toutes les matières.",
+                    "Ils regrettent le manque de possibilités d'échanges.",
+                    "Ils s'impliquent de façon responsable dans les cours.",
+                    "Ils sont de plus en plus nombreux à choisir ce système."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Serge Ravet is categorical: 'Tomorrow, we will study in another world, a virtual world,' affirms the director of the European Institute of e-learning, convinced that new technologies will 'revolutionize the way of learning and teaching.'\nWith e-learning (or online training), the student effectively becomes an actor in their education. Thanks to communication tools – instant messaging, chat, videoconferencing – and collaboration – wikis, forums – they can maintain a new relationship with their teachers. 'Interestingly, physical distance can be an advantage because technology facilitates interactions,' notes Serge Ravet. 'It's often less intimidating to question a teacher behind your screen than in an amphitheater!'",
+                    question: "What do we learn about students who practice e-learning?",
+                    options: [
+                        "They improve their results in all subjects.",
+                        "They regret the lack of exchange opportunities.",
+                        "They engage responsibly in classes.",
+                        "More and more of them are choosing this system."
+                    ],
+                    explanation: "The text says 'l'étudiant devient effectivement acteur de sa formation' (the student effectively becomes an actor in their education), meaning they engage/participate responsibly."
+                }
+            },
+            {
+                id: 29,
+                passage: "J'ai beau être un styliste très reconnu, je ne dirai jamais que j'ai créé la robe parfaite ! Je n'aime pas la perfection, ni les gens parfaits. Je hais que l'on me dise : « Oui, tout va très bien ! », alors qu'il y a des problèmes. Quand je suis arrivé à Paris, le mot que j'ai le plus entendu était « non ». J'aime vivre avec ce « non » car j'ai peur de la perfection. Elle est synonyme de fin puisque c'est le doute et l'insatisfaction qui font revenir à l'atelier et tout recommencer, tout améliorer. Le « non » ne cache pas la réalité, et cela stimule.\n\nD'après Madame Figaro",
+                question: "Comment le styliste interprète-t-il le mot « non » ?",
+                options: [
+                    "Comme un défaut d'honnêteté.",
+                    "Comme un manque de confiance.",
+                    "Comme une appréciation déguisée.",
+                    "Comme une incitation à l'action."
+                ],
+                correct: 3,
+                translation: {
+                    passage: "Even though I'm a very recognized stylist, I will never say I created the perfect dress! I don't like perfection, nor perfect people. I hate being told: 'Yes, everything is going great!', when there are problems. When I arrived in Paris, the word I heard most was 'no'. I like living with this 'no' because I fear perfection. It's synonymous with the end since it's doubt and dissatisfaction that bring you back to the workshop to start over, to improve everything. The 'no' doesn't hide reality, and that stimulates.\n\nFrom Madame Figaro",
+                    question: "How does the stylist interpret the word 'no'?",
+                    options: [
+                        "As a lack of honesty.",
+                        "As a lack of confidence.",
+                        "As a disguised appreciation.",
+                        "As an incitement to action."
+                    ],
+                    explanation: "The stylist says 'no' stimulates him ('cela stimule') and makes him return to improve things, so it's an incitement/motivation to take action."
+                }
+            },
+            {
+                id: 30,
+                passage: "Chère Madame,\n\nJe vous remercie de votre commande mais votre règlement ne couvre pas totalement le montant de votre achat. Plutôt que de vous faire supporter des frais supplémentaires, je vous expédie votre colis dès aujourd'hui et je vous demande de me faire parvenir un chèque de 20 euros, à réception.\n\nBien sincèrement.",
+                question: "Quel est l'objet de cette lettre ?",
+                options: [
+                    "Demander à une cliente de payer l'intégralité de sa commande.",
+                    "Prévenir une cliente que sa commande sera livrée en retard.",
+                    "Confirmer à une cliente que sa commande a bien été expédiée.",
+                    "Prévenir une cliente qu'elle devra payer 20 euros de frais d'envoi."
+                ],
+                correct: 0,
+                translation: {
+                    passage: "Dear Madam,\n\nThank you for your order but your payment does not fully cover the amount of your purchase. Rather than making you bear additional fees, I'm sending your package today and ask you to send me a check for 20 euros upon reception.\n\nSincerely.",
+                    question: "What is the purpose of this letter?",
+                    options: [
+                        "To ask a customer to pay the full amount of her order.",
+                        "To warn a customer that her order will be delivered late.",
+                        "To confirm to a customer that her order has been shipped.",
+                        "To warn a customer that she will have to pay 20 euros shipping fees."
+                    ],
+                    explanation: "The payment is incomplete ('ne couvre pas totalement le montant'), so the seller asks for the remaining 20 euros to complete the full payment."
+                }
+            },
+            {
+                id: 31,
+                passage: "Quarante terrains de football. C'est la superficie que les forêts perdent chaque minute à travers le monde. La destruction de la forêt tropicale provoque chaque année plus de rejet dans l'atmosphère que l'ensemble du secteur des transports. L'imaginaire collectif rendrait volontiers le commerce du bois principal responsable de la déforestation, alors qu'il n'en est rien. L'acteur majeur de ce phénomène est l'agriculture, responsable à 80 % des déboisements dans les zones tropicales. Le marché illégal du bois a aussi sa part de responsabilité. Il est un facteur déclenchant, et s'alimente des autres activités. Quelque 1,6 milliard d'habitants dépendent directement des forêts, et contribuent pourtant à sa raréfaction, voire à sa disparition.",
+                question: "Selon cet article, sur quoi la déforestation a-t-elle un impact ?",
+                options: [
+                    "Sur l'industrie des bois rares.",
+                    "Sur la démographie dans ces zones.",
+                    "Sur la pollution atmosphérique.",
+                    "Sur la progression des cultures tropicales."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Forty football fields. That's the area that forests lose every minute around the world. The destruction of tropical forests causes more emissions into the atmosphere each year than the entire transport sector. The collective imagination would readily make the timber trade the main culprit of deforestation, when this is not the case. The major actor in this phenomenon is agriculture, responsible for 80% of deforestation in tropical areas. The illegal timber market also has its share of responsibility. It's a triggering factor, and feeds on other activities. Some 1.6 billion people depend directly on forests, yet contribute to their scarcity, even their disappearance.",
+                    question: "According to this article, what does deforestation impact?",
+                    options: [
+                        "The rare wood industry.",
+                        "Demographics in these areas.",
+                        "Atmospheric pollution.",
+                        "The growth of tropical crops."
+                    ],
+                    explanation: "The text states that forest destruction 'provoque chaque année plus de rejet dans l'atmosphère' (causes more emissions into the atmosphere), impacting atmospheric pollution."
+                }
+            },
+            {
+                id: 32,
+                passage: "Les additifs et conservateurs, ces poudres de perlimpinpin, rendent appétissant un produit médiocre afin de mieux le vendre. C'est le cas des colorants si la préparation est terne, des exhausteurs de goût de type glutamate si elle est fade, des agents de texture si elle est sans consistance, ou des arômes si elle est insipide ou a carrément mauvais goût. On vous dit que les conservateurs ou antioxydants (sorbates, nitrites, sulfites…) servent à vous protéger de possibles intoxications bactériennes, mais ils servent surtout à prolonger les dates limites de consommation, afin de laisser plus de temps aux industriels et aux supermarchés pour commercialiser leur marchandise.",
+                question: "Que critique cet article ?",
+                options: [
+                    "Le dosage des produits chimiques dans les aliments.",
+                    "Le manque de lisibilité des étiquettes.",
+                    "Les arguments hypocrites avancés par les fabricants.",
+                    "Les conséquences sanitaires des ajouts."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Additives and preservatives, these snake oil powders, make a mediocre product appetizing in order to sell it better. This is the case with colorants if the preparation is dull, glutamate-type flavor enhancers if it's bland, texture agents if it lacks consistency, or aromas if it's insipid or downright bad tasting. You're told that preservatives or antioxidants (sorbates, nitrites, sulfites...) serve to protect you from possible bacterial poisoning, but they mainly serve to extend consumption deadlines, to give more time to manufacturers and supermarkets to market their goods.",
+                    question: "What does this article criticize?",
+                    options: [
+                        "The dosage of chemicals in foods.",
+                        "The lack of label readability.",
+                        "The hypocritical arguments put forward by manufacturers.",
+                        "The health consequences of additives."
+                    ],
+                    explanation: "The article criticizes manufacturers saying preservatives protect consumers ('On vous dit que...') when really they just extend shelf life for commercial reasons - hypocritical arguments."
+                }
+            },
+            {
+                id: 33,
+                passage: "Le stress est l'ennemi numéro 1 du bien-être. Quand il prend le dessus, on perd sa motivation et on manque continuellement d'énergie.\nLes médecins sont formels : le stress est souvent à l'origine de dysfonctionnements physiques. C'est aussi une cause directe du vieillissement prématuré. Une personne stressée se replie sur elle-même et renonce progressivement à profiter de certaines de ses capacités mentales. Voici comment canaliser ce stress pour le transformer en énergie positive : apprendre à bien respirer, ne plus gaspiller ses forces à réfléchir aux actions du passé, changer les mauvaises habitudes et finalement savoir se ménager au quotidien.",
+                question: "Qu'apprend-on sur le stress dans cet article ?",
+                options: [
+                    "C'est un handicap qui peut se transformer en atout.",
+                    "Il décuple l'ensemble des aptitudes cérébrales.",
+                    "Il est officiellement reconnu comme une maladie.",
+                    "Ses effets touchent plus particulièrement les seniors."
+                ],
+                correct: 0,
+                translation: {
+                    passage: "Stress is the number 1 enemy of well-being. When it takes over, you lose motivation and constantly lack energy.\nDoctors are clear: stress is often the source of physical dysfunctions. It's also a direct cause of premature aging. A stressed person withdraws into themselves and gradually gives up on benefiting from some of their mental capacities. Here's how to channel this stress to transform it into positive energy: learn to breathe well, stop wasting your energy thinking about past actions, change bad habits and finally know how to pace yourself daily.",
+                    question: "What do we learn about stress in this article?",
+                    options: [
+                        "It's a handicap that can be transformed into an asset.",
+                        "It multiplies all brain abilities.",
+                        "It's officially recognized as a disease.",
+                        "Its effects particularly affect seniors."
+                    ],
+                    explanation: "The article says stress is harmful (handicap) but can be 'transformed into positive energy' ('transformer en énergie positive'), making it an asset."
+                }
+            },
+            {
+                id: 34,
+                passage: "La démocratie semble, dans son principe, une façon séduisante d'organiser le pouvoir dans une société. Le peuple se gouverne lui-même ou par ses représentants et chacun, étant à la fois gouverné et gouvernant, apprend à tenir compte de l'intérêt général aussi bien que de ses intérêts individuels. Un tel apprentissage n'a pas été facile : il a fallu beaucoup d'approximations et d'échecs avant de parvenir aux démocraties actuelles. Face aux difficultés, ces constructions complexes et fragiles se sont montrées incroyablement résilientes, peut-être parce que leur légitimité s'enracine au plus profond des « passions du cœur de l'homme ». « Structurellement inachevée », la démocratie surprend par sa capacité à se transformer tout en restant fidèle à son ambition première. En dépit des critiques et des attaques, elle a su évoluer au gré des siècles et affronte aujourd'hui de nouveaux défis. Polymorphe, elle diffère également selon les pays, chaque expérience nationale ou régionale étant le fruit d'une histoire qui dépend avant tout des peuples qui l'écrivent.",
+                question: "Quelle est l'idée principale de cet article ?",
+                options: [
+                    "L'idée de démocratie est aujourd'hui plus controversée qu'avant.",
+                    "La démocratie est affaiblie par la diversité de ses formes.",
+                    "La mise en place de la démocratie résulte d'un long processus.",
+                    "Les fondements théoriques de la démocratie sont utopiques."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Democracy seems, in principle, an appealing way to organize power in society. The people govern themselves or through their representatives and everyone, being both governed and governing, learns to consider the general interest as well as their individual interests. Such learning wasn't easy: it took many approximations and failures before achieving current democracies. Facing difficulties, these complex and fragile constructions have shown themselves incredibly resilient, perhaps because their legitimacy is rooted deep in 'the passions of the human heart.' 'Structurally unfinished,' democracy surprises with its ability to transform while remaining faithful to its primary ambition. Despite criticism and attacks, it has evolved over the centuries and faces new challenges today. Polymorphic, it also differs by country, each national or regional experience being the fruit of a history that depends above all on the peoples who write it.",
+                    question: "What is the main idea of this article?",
+                    options: [
+                        "The idea of democracy is more controversial today than before.",
+                        "Democracy is weakened by the diversity of its forms.",
+                        "The establishment of democracy results from a long process.",
+                        "The theoretical foundations of democracy are utopian."
+                    ],
+                    explanation: "The article emphasizes 'beaucoup d'approximations et d'échecs' (many approximations and failures) over centuries, highlighting democracy as a long, ongoing process."
+                }
+            },
+            {
+                id: 35,
+                passage: "« Un produit qui ne s'userait pas serait une tragédie pour les affaires », lisait-on dans une ancienne revue américaine. Des années plus tard, le concept d'obsolescence programmée n'a pas pris une ride ! Il s'agit pour les fabricants de réduire volontairement la durée de vie ou d'emploi d'un produit afin d'en augmenter le taux de remplacement. Ici se cache le cœur de la course à la consommation. Le bilan écologique est également sans appel : les matières que contiennent nos appareils finissent en grande partie en déchets incinérés ou enfouis. L'exemple du téléphone portable en dit long : dans un rapport, une sénatrice souligne que « la conception des téléphones est délibérément défavorable au réemploi et au recyclage »",
+                question: "Que constate ce journaliste à propos des articles proposés par les fabricants ?",
+                options: [
+                    "Ils se détériorent après un certain temps.",
+                    "Ils sont dangereux pour la santé.",
+                    "Ils sont nuisibles pour l'environnement.",
+                    "Ils sont vendus à des prix élevés."
+                ],
+                correct: 0,
+                translation: {
+                    passage: "'A product that wouldn't wear out would be a tragedy for business,' read an old American magazine. Years later, the concept of planned obsolescence hasn't aged! For manufacturers, it involves voluntarily reducing the lifespan or use of a product to increase its replacement rate. Here lies the heart of the race to consumption. The ecological balance is also damning: the materials in our devices end up largely as incinerated or buried waste. The example of mobile phones speaks volumes: in a report, a senator emphasizes that 'the design of phones is deliberately unfavorable to reuse and recycling.'",
+                    question: "What does this journalist observe about items offered by manufacturers?",
+                    options: [
+                        "They deteriorate after a certain time.",
+                        "They're dangerous to health.",
+                        "They're harmful to the environment.",
+                        "They're sold at high prices."
+                    ],
+                    explanation: "The text discusses 'obsolescence programmée' (planned obsolescence) - manufacturers deliberately reduce product lifespan, meaning products deteriorate/break after a certain time."
+                }
+            },
+            {
+                id: 36,
+                passage: "On connaît Cézanne surtout pour ses paysages, mais le Musée d'Orsay montre, pour la première fois, une partie méconnue de l'œuvre de l'artiste. On y croisera ainsi le visage de son épouse, seul motif autant étudié par le peintre que la montagne Sainte-Victoire. Au fil des versions, Hortense Fiquet devient l'objet d'une recherche plastique, de mise en scène et de géométrisation des formes. Mais Cézanne peut aussi avoir le pinceau cruel. Dès ses débuts, les figures de son père et de sa mère sont tourmentées. Lui-même se représente à 27 ans, patibulaire et le regard injecté de sang. À la fin de sa vie, Cézanne choisit des anonymes du monde rural. Ses tableaux ne sont alors qu'une autre forme de paysage.",
+                question: "Que souligne cette exposition sur Paul Cézanne ?",
+                options: [
+                    "L'influence de ses contemporains.",
+                    "La singularité de ses portraits.",
+                    "Son engouement pour la nature.",
+                    "Son travail post-impressionniste."
+                ],
+                correct: 1,
+                translation: {
+                    passage: "Cézanne is known mainly for his landscapes, but the Musée d'Orsay shows, for the first time, a little-known part of the artist's work. You'll encounter the face of his wife, the only subject studied as much by the painter as the Sainte-Victoire mountain. Over versions, Hortense Fiquet becomes the object of artistic research, staging and geometrization of forms. But Cézanne can also have a cruel brush. From his beginnings, the figures of his father and mother are tormented. He represents himself at 27, sinister-looking with bloodshot eyes. At the end of his life, Cézanne chooses anonymous people from the rural world. His paintings are then just another form of landscape.",
+                    question: "What does this exhibition highlight about Paul Cézanne?",
+                    options: [
+                        "The influence of his contemporaries.",
+                        "The uniqueness of his portraits.",
+                        "His passion for nature.",
+                        "His post-impressionist work."
+                    ],
+                    explanation: "The exhibition shows 'une partie méconnue' (a little-known part) of his work - his portraits, which were unique in their approach (cruel, tormented, geometric)."
+                }
+            },
+            {
+                id: 37,
+                passage: "Les champs de mise en œuvre des robots sont légion : production, services, gestion des données, vie urbaine, sécurité, loisirs, domotique… Leur arrivée donne lieu à des transformations inédites et à des problématiques nouvelles, souvent mythifiées. Un univers professionnel où tout serait régi par des robots ? Voilà qui est encore loin de la réalité. Si l'automatisation a fait disparaître des emplois, elle en a aussi créé d'autres. Surtout, elle a bouleversé le fonctionnement de l'entreprise, faisant peser une forte pression sur les salariés, tenus de maintenir la continuité de la production dans des processus toujours plus complexes.",
+                question: "Quelle est la conséquence de la robotisation dans le monde professionnel ?",
+                options: [
+                    "Elle a accru la compétitivité industrielle.",
+                    "Elle a amélioré les conditions de travail.",
+                    "Elle a enrayé la hausse du chômage.",
+                    "Elle a modifié l'organisation du travail."
+                ],
+                correct: 3,
+                translation: {
+                    passage: "The fields of robot implementation are legion: production, services, data management, urban life, security, leisure, home automation... Their arrival gives rise to unprecedented transformations and new problems, often mythified. A professional universe where everything would be governed by robots? That's still far from reality. If automation has eliminated jobs, it has also created others. Above all, it has disrupted the functioning of the company, putting strong pressure on employees, required to maintain production continuity in increasingly complex processes.",
+                    question: "What is the consequence of robotization in the professional world?",
+                    options: [
+                        "It increased industrial competitiveness.",
+                        "It improved working conditions.",
+                        "It stopped the rise in unemployment.",
+                        "It modified work organization."
+                    ],
+                    explanation: "The text states robotization 'a bouleversé le fonctionnement de l'entreprise' (disrupted the company's functioning), which means it modified work organization."
+                }
+            },
+            {
+                id: 38,
+                passage: "Une époque inimaginable pour un enfant d'aujourd'hui : ce temps où les parents n'avaient pas Internet et leur progéniture, pas de portable. Les parents les plus au fait s'informaient sur le monde une, voire deux fois par jour. Maintenant nous savons qu'il va mal tout le temps. Chaque seconde, une mauvaise nouvelle tombe de l'autre bout du globe dans notre smartphone. En quelques années, nous avons basculé dans un nouveau monde. Plus grand, immense même, tissé de rencontres improbables et d'opportunités fabuleuses, mais aussi surpeuplé de contrées hostiles et de tribus numériques agressives. Notre nouvelle vie est absolument excitante, vertigineuse même. Mais, justement, il tient à nous de dompter ce vertige.",
+                question: "Que constate ce journaliste ?",
+                options: [
+                    "La dégradation des relations sociales à cause d'Internet.",
+                    "La multiplication des sources d'information.",
+                    "La nocivité des écrans sur le développement des enfants.",
+                    "La recrudescence d'informations mensongères."
+                ],
+                correct: 1,
+                translation: {
+                    passage: "An unimaginable era for a child today: that time when parents didn't have the Internet and their offspring had no mobile phones. The most informed parents learned about the world once, maybe twice a day. Now we know it's going badly all the time. Every second, bad news falls from the other end of the globe into our smartphone. In a few years, we've tipped into a new world. Larger, even immense, woven with improbable encounters and fabulous opportunities, but also overcrowded with hostile lands and aggressive digital tribes. Our new life is absolutely exciting, even dizzying. But precisely, it's up to us to tame this dizziness.",
+                    question: "What does this journalist observe?",
+                    options: [
+                        "The degradation of social relations because of the Internet.",
+                        "The multiplication of information sources.",
+                        "The harmfulness of screens on children's development.",
+                        "The resurgence of false information."
+                    ],
+                    explanation: "The journalist contrasts the past (news once or twice daily) with now ('Chaque seconde, une mauvaise nouvelle tombe'), showing the multiplication of information sources."
+                }
+            },
+            {
+                id: 39,
+                passage: "Treize jeunes cinéastes, achevant leur formation dans les plus prestigieuses écoles d'animation, ont planché sur quelques vers de Paul Éluard, livrant leur vision originale de son univers poétique. S'inscrivant dans la suite des programmes de courts-métrages dédiés à Prévert et Apollinaire, ce nouveau florilège de la série En sortant de l'école met en lumière l'œuvre d'un « apparenté surréaliste » dont la notoriété est souvent, hélas, réduite au seul - et incontournable - poème Liberté... Sa délicatesse, en amour comme en fantaisie, s'avère un combustible merveilleux pour de jeunes cinéastes.",
+                question: "Selon cette critique, quel est l'apport de ce dernier ensemble de courts-métrages ?",
+                options: [
+                    "Il constitue une création artistique novatrice.",
+                    "Il établit des ponts avec d'autres auteurs.",
+                    "Il fait connaître les travaux d'un écrivain.",
+                    "Il ouvre la voie à de prochaines réalisations."
+                ],
+                correct: 2,
+                translation: {
+                    passage: "Thirteen young filmmakers, completing their training in the most prestigious animation schools, worked on some verses by Paul Éluard, delivering their original vision of his poetic universe. Following the short film programs dedicated to Prévert and Apollinaire, this new collection of the series Leaving School highlights the work of a 'surrealist associate' whose fame is often, alas, reduced to the single - and unavoidable - poem Liberty... His delicacy, in love as in fantasy, proves to be wonderful fuel for young filmmakers.",
+                    question: "According to this review, what is the contribution of this latest set of short films?",
+                    options: [
+                        "It constitutes an innovative artistic creation.",
+                        "It builds bridges with other authors.",
+                        "It makes known the works of a writer.",
+                        "It paves the way for future productions."
+                    ],
+                    explanation: "The films 'met en lumière l'œuvre' (highlight the work) of Éluard, whose fame is often reduced to one poem, so they make his broader works known to audiences."
+                }
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+        let score = 0;
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('tcf_test39_progress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                currentQuestion = data.currentQuestion || 0;
+                answers = data.answers || [];
+                score = data.score || 0;
+            }
+        }
+
+        // Save progress to localStorage
+        function saveProgress() {
+            const data = {
+                currentQuestion: currentQuestion,
+                answers: answers,
+                score: score
+            };
+            localStorage.setItem('tcf_test39_progress', JSON.stringify(data));
+        }
+
+        // Reset test and clear progress
+        function resetTest() {
+            if (confirm('Êtes-vous sûr de vouloir recommencer le test? Toute votre progression sera perdue.')) {
+                localStorage.removeItem('tcf_test39_progress');
+                location.reload();
+            }
+        }
+
+        function createNavigation() {
+            const nav = document.getElementById('navigation');
+            nav.innerHTML = ''; // Clear existing circles
+            for (let i = 0; i < questions.length; i++) {
+                const circle = document.createElement('div');
+                circle.className = 'nav-circle';
+                circle.textContent = i + 1;
+                circle.onclick = () => goToQuestion(i);
+                nav.appendChild(circle);
+            }
+        }
+
+        function updateNavigation() {
+            const circles = document.querySelectorAll('.nav-circle');
+            circles.forEach((circle, index) => {
+                circle.classList.remove('current', 'answered');
+                if (index === currentQuestion) {
+                    circle.classList.add('current');
+                } else if (answers[index] !== undefined) {
+                    circle.classList.add('answered');
+                }
+            });
+        }
+
+        function createQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = ''; // Clear existing questions
+
+            questions.forEach((q, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-container';
+                if (index === 0) qDiv.classList.add('active');
+
+                let html = `
+                    <div class="passage">${q.passage.replace(/\n/g, '<br>')}</div>
+                    <div class="question-text">
+                        <span class="question-number">Question ${q.id}</span>
+                        ${q.question}
+                    </div>
+                    <div class="options">
+                `;
+
+                q.options.forEach((option, optIndex) => {
+                    html += `
+                        <div class="option" data-question="${index}" data-option="${optIndex}">
+                            <span class="option-letter">${String.fromCharCode(65 + optIndex)}</span>
+                            <span>${option}</span>
+                        </div>
+                    `;
+                });
+
+                html += `
+                    </div>
+                    <button class="validate-btn" data-question="${index}" disabled>Valider la réponse</button>
+
+                    <div class="translation-section" id="translation-${index}">
+                        <div class="translation-title">📖 English Translation</div>
+                        <div class="translation-content">
+                            <div class="translation-passage">
+                                <strong>Passage:</strong><br>
+                                ${q.translation.passage.replace(/\n/g, '<br>')}
+                            </div>
+                            <div class="translation-passage">
+                                <strong>Question:</strong><br>
+                                ${q.translation.question}
+                            </div>
+                            <div class="translation-passage">
+                                <strong>Options:</strong><br>
+                                ${q.translation.options.map((opt, i) => `${String.fromCharCode(65 + i)}) ${opt}`).join('<br>')}
+                            </div>
+                            <div class="translation-explanation">
+                                <div class="explanation-label">✓ Explanation:</div>
+                                ${q.translation.explanation}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="navigation-buttons">
+                        <button class="nav-btn" onclick="previousQuestion()" ${index === 0 ? 'disabled' : ''}>
+                            ← Précédent
+                        </button>
+                        <button class="nav-btn" onclick="nextQuestion()">
+                            ${index === questions.length - 1 ? 'Terminer' : 'Suivant →'}
+                        </button>
+                    </div>
+                `;
+
+                qDiv.innerHTML = html;
+                container.appendChild(qDiv);
+            });
+
+            attachEventListeners();
+        }
+
+        function attachEventListeners() {
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const qIndex = parseInt(this.dataset.question);
+                    const optIndex = parseInt(this.dataset.option);
+
+                    if (answers[qIndex] === undefined) {
+                        const allOptions = document.querySelectorAll(`.option[data-question="${qIndex}"]`);
+                        allOptions.forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+
+                        document.querySelector(`.validate-btn[data-question="${qIndex}"]`).disabled = false;
+                    }
+                });
+            });
+
+            document.querySelectorAll('.validate-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const qIndex = parseInt(this.dataset.question);
+                    const selectedOption = document.querySelector(`.option[data-question="${qIndex}"].selected`);
+
+                    if (selectedOption) {
+                        const optIndex = parseInt(selectedOption.dataset.option);
+                        answers[qIndex] = optIndex;
+
+                        const allOptions = document.querySelectorAll(`.option[data-question="${qIndex}"]`);
+                        allOptions.forEach((opt, i) => {
+                            opt.classList.add('disabled');
+                            if (i === questions[qIndex].correct) {
+                                opt.classList.add('correct');
+                            } else if (i === optIndex && i !== questions[qIndex].correct) {
+                                opt.classList.add('incorrect');
+                            }
+                        });
+
+                        this.disabled = true;
+
+                        document.getElementById(`translation-${qIndex}`).classList.add('show');
+
+                        if (optIndex === questions[qIndex].correct) {
+                            score++;
+                        }
+
+                        updateScore();
+                        updateNavigation();
+                        saveProgress();
+                    }
+                });
+            });
+        }
+
+        function goToQuestion(index) {
+            const containers = document.querySelectorAll('.question-container');
+            containers.forEach(c => c.classList.remove('active'));
+            containers[index].classList.add('active');
+            currentQuestion = index;
+            updateNavigation();
+            saveProgress();
+            window.scrollTo(0, 0);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                goToQuestion(currentQuestion - 1);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                goToQuestion(currentQuestion + 1);
+            } else {
+                showFinalResults();
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+
+        function showFinalResults() {
+            const percentage = (score / questions.length * 100).toFixed(1);
+            let level = '';
+            if (percentage >= 90) level = 'C2';
+            else if (percentage >= 80) level = 'C1';
+            else if (percentage >= 70) level = 'B2';
+            else if (percentage >= 60) level = 'B1';
+            else if (percentage >= 50) level = 'A2';
+            else level = 'A1';
+
+            alert(`Test terminé!\n\nScore final: ${score}/${questions.length} (${percentage}%)\nNiveau estimé: ${level}\n\nVous pouvez revoir vos réponses en naviguant entre les questions.`);
+        }
+
+        // Restore UI state from saved answers
+        function restoreState() {
+            answers.forEach((answer, qIndex) => {
+                if (answer !== undefined) {
+                    const allOptions = document.querySelectorAll(`.option[data-question="${qIndex}"]`);
+                    const validateBtn = document.querySelector(`.validate-btn[data-question="${qIndex}"]`);
+
+                    allOptions.forEach((opt, i) => {
+                        opt.classList.add('disabled');
+                        if (i === answer) {
+                            opt.classList.add('selected');
+                        }
+                        if (i === questions[qIndex].correct) {
+                            opt.classList.add('correct');
+                        } else if (i === answer && i !== questions[qIndex].correct) {
+                            opt.classList.add('incorrect');
+                        }
+                    });
+
+                    if (validateBtn) {
+                        validateBtn.disabled = true;
+                    }
+
+                    // Show translation
+                    const translation = document.getElementById(`translation-${qIndex}`);
+                    if (translation) {
+                        translation.classList.add('show');
+                    }
+                }
+            });
+        }
+
+        // Initialize - IMPORTANT: Clear containers before creating to avoid duplicates
+        loadProgress();
+        createNavigation();
+        createQuestions();
+        restoreState();
+        updateScore();
+        updateNavigation();
+        goToQuestion(currentQuestion);
+    </script>
+</body>
+</html>
